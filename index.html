@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users API</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        input{
+            padding: 8px;
+            margin: 5px 0;
+            width: 250px;
+        }
+
+        button{
+            padding: 8px 15px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        table{
+            border-collapse: collapse;
+            margin-top: 20px;
+            width: 500px;
+        }
+
+        table, th, td{
+            border: 1px solid black;
+        }
+
+        th, td{
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Thêm User</h2>
+
+    <input type="text" id="name_users" placeholder="Nhập tên">
+    <br>
+
+    <input type="number" id="phone" placeholder="Nhập số điện thoại">
+    <br>
+
+    <button onclick="addUser()">Thêm User</button>
+
+    <hr>
+
+    <h2>Danh sách User</h2>
+
+    <button onclick="getUsers()">Lấy User</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Phone</th>
+            </tr>
+        </thead>
+
+        <tbody id="userTable">
+
+        </tbody>
+    </table>
+<script>
+
+    const API_URL = "https://web-test-d22.onrender.com/api/v1/users";
+
+    // GET USERS
+    async function getUsers() {
+
+        try {
+
+            const response = await fetch(API_URL);
+
+            const data = await response.json();
+
+            let html = "";
+
+            data.forEach(user => {
+
+                html += `
+                    <tr>
+                        <td>${user.id}</td>
+                        <td>${user.name}</td>
+                        <td>${user.phone}</td>
+                    </tr>
+                `;
+
+            });
+
+            document.getElementById("userTable").innerHTML = html;
+
+        } catch (error) {
+
+            console.log(error);
+
+        }
+
+    }
+
+    // POST USER
+    async function addUser() {
+
+        const name = document.getElementById("name_users").value;
+
+        const phone = document.getElementById("phone").value;
+
+        const newUser = {
+            name: name,
+            phone: parseInt(phone)
+        };
+
+        try {
+
+            const response = await fetch(API_URL, {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(newUser)
+
+            });
+
+            const data = await response.json();
+
+            console.log(data);
+
+            alert("Thêm user thành công");
+
+            getUsers();
+
+        } catch (error) {
+
+            console.log(error);
+
+        }
+
+    }
+
+</script>
+
+</body>
+</html>
